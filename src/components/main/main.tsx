@@ -65,7 +65,7 @@ class Main extends React.Component<MainProps, MainState> {
             {
                 this.state.companies.map((it: ICompany) => (
                     <div key={it.naziv} className="company-main-container">
-                        {it.naziv} ({it.brojPraksi}) - slobodno još ({it.brojPraksi - this.state.students.filter((s: IStudent) => s.prihvaceno && s.prihvacenaFirma === it.id).length})
+                        {it.naziv} ({it.brojPraksi}) - <i>{it.email}</i> - slobodno još ({it.brojPraksi - this.state.students.filter((s: IStudent) => s.prihvaceno && s.prihvacenaFirma === it.id).length}) {it.poslanMail ? <b style={{color: "green"}}>MAIL</b> : <b style={{color: "rgba(0,0,0,0.1)"}}>MAIL</b>} 
                         {
                             phase3Students && phase3Students.length &&
                             <div className="company-inner-container">
@@ -82,11 +82,15 @@ class Main extends React.Component<MainProps, MainState> {
                                         .sort((a: any, b: any) => {
                                             return b.tezinskiFaktor - a.tezinskiFaktor;
                                         })
-                                        .map((s: IStudent) => (
-                                            <div key={s.brIndeksa}>
-                                                {s.ime} {s.prezime} <b>{s.prosjek}</b> {s.odabir1 === it.id ? "(1)" : null} {s.odabir2 === it.id ? "(2)" : null} {s.odabir3 === it.id ? "(3)" : null}
-                                            </div>
-                                        ))
+                                        .map((s: IStudent, i) => {
+                                            let ispis = <span>{i + 1}. {s.ime} {s.prezime} <b>{s.prosjek}</b> {s.odabir1 === it.id ? "(1)" : null} {s.odabir2 === it.id ? "(2)" : null} {s.odabir3 === it.id ? "(3)" : null} email: <i>{s.email}</i> </span>
+                                            // let ispis = <span> {i+1}. {s.ime} {s.prezime} email: <i>{s.email}</i></span>;
+                                            return (
+                                                <div key={s.brIndeksa}>
+                                                    {(s.forceRemoveOdabir1 && s.odabir1 === it.id) || (s.forceRemoveOdabir2 && s.odabir2 === it.id) || (s.forceRemoveOdabir3 && s.odabir3 === it.id) ? <del>{ispis}</del> : ispis}
+                                                </div>
+                                            )
+                                        })
                                 }
                             </div>
                         }
@@ -123,10 +127,11 @@ class Main extends React.Component<MainProps, MainState> {
             {
                 this.state.students.filter(it => !it.prihvaceno && !it.priznavanje && !it.nasaoSam).map((it: IStudent, i) => (
                     <div key={it.brIndeksa}>
-                        {i + 1}. {it.ime} {it.prezime}
+                        {i + 1}. {it.ime} {it.prezime} {it.odabir1 == 0 && it.odabir2 == 0 && it.odabir3 == 0 && <b> FALI ANKETA !!!</b>}
                     </div>
                 ))
             }
+
         </div>);
     }
 }
