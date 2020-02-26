@@ -10,7 +10,7 @@ export interface ICompany{
 export interface IStudent{
     prezime: string,
     ime: string,
-    brIndeksa: number,
+    brIndeksa: string,
     email: string,
     imeStudija: string,
     prosjek: number,
@@ -27,4 +27,6 @@ export interface IStudent{
     prihvaceno?: boolean,
     prihvacenaFirma?: number,
     nijeIspunioAnketu?: boolean,
+    prisilnoDodijeljeno?: boolean,
+    prisilnoDodijeljenoFirma?: number,
 }
