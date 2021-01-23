@@ -1,6 +1,9 @@
-import * as React from 'react';
 import './main.css';
+
+import * as React from 'react';
+
 import { ICompany, IStudent } from '../../models/models';
+
 var FileSaver = require('file-saver');
 
 declare var DocxReader: any;
@@ -20,7 +23,7 @@ class Main extends React.Component<MainProps, MainState> {
     constructor(props: MainProps) {
         super(props);
         const d = new Date();
-        this.currentYear = d.getFullYear();
+        this.currentYear = 2020 //d.getFullYear();
 
         this.state = {
             students: [],
@@ -106,8 +109,16 @@ class Main extends React.Component<MainProps, MainState> {
         this.state.students.filter(it => it.prihvaceno).map((student: IStudent, i) => {
             let firma = this.state.companies.find(f => f.id === student.prihvacenaFirma);
             const firmaNaziv: string = "" + firma?.naziv;
-            const firmaAdresa: string = "Nepoznato";
-            const studentIme: string = student.ime + " " + student.prezime;
+            const firmaAdresa: string = "" + firma?.sjediste;
+            const studentIme: string = student.prezime + " " + student.ime;
+            const brIndeksa: string = student.brIndeksa;
+            this.executeDocx(firmaNaziv, firmaAdresa, studentIme, brIndeksa)
+        });
+        this.state.students.filter(it => it.prisilnoDodijeljeno).map((student: IStudent, i) => {
+            let firma = this.state.companies.find(f => f.id === student.prisilnoDodijeljenoFirma);
+            const firmaNaziv: string = "" + firma?.naziv;
+            const firmaAdresa: string = "" + firma?.sjediste;
+            const studentIme: string = student.prezime + " " + student.ime;
             const brIndeksa: string = student.brIndeksa;
             this.executeDocx(firmaNaziv, firmaAdresa, studentIme, brIndeksa)
         });
@@ -191,7 +202,7 @@ class Main extends React.Component<MainProps, MainState> {
                     return b.prosjek - a.prosjek;
                 }).filter(it => it.prisilnoDodijeljeno).map((it: IStudent, i) => (
                     <div key={it.brIndeksa}>
-                        {i + 1}. {it.ime} {it.prezime} - {this.state.companies.filter((c: ICompany) => c.id === it.prisilnoDodijeljenoFirma).map(c => c.naziv)}
+                        {i + 1}. {it.ime} {it.prezime} - {it.email} - {this.state.companies.filter((c: ICompany) => c.id === it.prisilnoDodijeljenoFirma).map(c => c.naziv)}
                     </div>
                 ))
             }
@@ -207,6 +218,47 @@ class Main extends React.Component<MainProps, MainState> {
             }
 
             <button onClick={() => this.generateUputnice()}>Generiraj uputnice</button>
+
+
+            <h1>Izvjestaj na kraju</h1>
+            <div className="izvjestaj-table">
+                <div>Naziv sastavnice</div>
+                <div>Tvrtka/institucija u kojoj je obavljena obvezna stručna praksa</div>
+                <div>Navedena tvrtka/institucija je Nastavna baza Sveučilišta u Splitu (DA/NE)</div>
+                <div>Kontakt osobe zadužene za stručnu praksu</div>
+                <div>Ukupan broj studenata u navedenoj tvrtki/instituciji</div>
+                <div>Broj studenata s invaliditetom</div>
+                <div>Broj ostalih studenata u nepovoljnom položaju</div>
+                <div>Studijski program</div>
+                <div>Broj mentora u navedenoj tvrtki/instituciji</div>
+                <div>Dužina trajanja stručne prakse</div>
+                <div>Broj zaposlenih studenata u navedenoj tvrtki/instituciji nakon odrađene studentske prakse od 2015. do danas</div>
+                {
+                this.state.companies.map(c=>{
+
+                    const studenti = this.state.students.filter(s=>s.prihvacenaFirma===c.id||s.prisilnoDodijeljenoFirma===c.id);
+                    const muski = studenti?.filter(s=>s.rod==="M")?.length;
+                    const zenski = studenti?.filter(s=>s.rod==="Z")?.length;
+                    if(muski||zenski){
+                        return (<>
+                            <div>FESB</div>
+                            <div>{c.naziv}</div>
+                            <div>{c.uNastavnojBazi ? "DA" : "NE"}</div>
+                            <div>{c.email}</div>
+                            <div>{muski} M, {zenski} Z</div>
+                            <div>??</div>
+                            <div>??</div>
+                            <div>Računarstvo</div>
+                            <div>{c.mentors?.length || 1}</div>
+                            <div>300 sati</div>
+                            <div>??</div>
+                        </>)
+                    } else return <></>
+                    
+                })
+            }
+            </div>
+            
 
         </div>);
     }

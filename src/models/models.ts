@@ -5,11 +5,15 @@ export interface ICompany{
     brojPraksi: number;
     razgovor: boolean;
     poslanMail: boolean;
+    sjediste: string;
+    uNastavnojBazi: boolean;
+    mentors: string[];
 }
 
 export interface IStudent{
     prezime: string,
     ime: string,
+    rod: string,
     brIndeksa: string,
     email: string,
     imeStudija: string,

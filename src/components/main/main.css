@@ -5,3 +5,14 @@
 .company-inner-container{
     margin-left: 20px;
 }
+
+.izvjestaj-table{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(11, 1fr)
+
+}
+
+.izvjestaj-table div{
+    border: 1px solid black;
+}
